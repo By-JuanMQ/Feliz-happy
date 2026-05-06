@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎉Feliz Cumpleaños mongola✨🫵</title>
+    <style>
+        :root {
+            --cake-width: 280px;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --color-primary: #ff8fab;
+            --color-glow: rgba(255, 143, 171, 0.7);
+            --chocolate-dark: #3b1f14;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* MEJORA 3: Fondo Animado */
+            background: linear-gradient(-45deg, #1a1a2e, #0f0f1a, #2a1a3e, #0f0f1a);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: white;
+            font-family: var(--font-main);
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content {
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 50px;
+            opacity: 0;
+            animation: fadeInDown 1.5s forwards;
+            /* MEJORA 1: Efecto Neon */
+            text-shadow: 0 0 15px var(--color-glow), 0 0 30px var(--color-glow);
+        }
+
+        .cake {
+            position: relative;
+            width: var(--cake-width);
+            height: 250px;
+            margin-bottom: 40px;
+            /* MEJORA 1: Efecto Neon */
+            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.3));
+        }
+
+        .layer {
+            position: absolute;
+            width: 100%;
+            height: 80px;
+            border-radius: 15px;
+            box-shadow: 
+                inset 0 4px 8px rgba(255,255,255,0.2),
+                inset 0 -10px 15px rgba(0,0,0,0.3),
+                0 10px 30px rgba(0,0,0,0.5);
+            opacity: 0;
+            animation: cakeDrop 1s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+        }
+
+        .layer-1 { background: linear-gradient(to bottom, #4e2a1e, #2a140d); bottom: 0; animation-delay: 0.2s; }
+        .layer-2 { background: linear-gradient(to bottom, #fff0d4, #f3d4a0); bottom: 50px; animation-delay: 0.6s; }
+        .layer-3 { background: linear-gradient(to bottom, #ff8fab, #ee7291); bottom: 100px; animation-delay: 1s; }
+
+        .topping {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 35px;
+            background: var(--chocolate-dark);
+            border-radius: 15px 15px 0 0;
+            z-index: 2;
+        }
+
+        .drip-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        .drip {
+            width: 18px;
+            height: 35px;
+            background: var(--chocolate-dark);
+            border-radius: 0 0 20px 20px;
+            margin-top: -2px;
+            animation: dripFlow 4s infinite ease-in-out;
+            transform-origin: top;
+        }
+
+        .drip:nth-child(1) { animation-delay: 0s; width: 22px; animation-duration: 3.5s; }
+        .drip:nth-child(2) { animation-delay: 0.8s; width: 15px; animation-duration: 4.2s; }
+        .drip:nth-child(3) { animation-delay: 1.5s; width: 25px; animation-duration: 3.8s; }
+        .drip:nth-child(4) { animation-delay: 0.3s; width: 18px; animation-duration: 4.5s; }
+        .drip:nth-child(5) { animation-delay: 1.1s; width: 20px; animation-duration: 3.2s; }
+
+        @keyframes dripFlow {
+            0%, 100% { height: 35px; transform: scaleX(1); }
+            50% { height: 65px; transform: scaleX(0.85); }
+        }
+
+        .candle {
+            position: absolute;
+            bottom: 175px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 50px;
+            background: linear-gradient(to right, #e0e0e0, #ffffff, #e0e0e0);
+            border-radius: 4px;
+            z-index: 5;
+            opacity: 0;
+            animation: fadeIn 0.5s 1.5s forwards;
+        }
+
+        .flame {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 24px;
+            background: radial-gradient(circle at 50% 100%, #fff, #ffeb3b 20%, #ff9800 50%, #f44336 80%);
+            border-radius: 50% 50% 35% 35%;
+            box-shadow: 0 0 20px #ff9800, 0 0 40px #ff9800;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        .smoke {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            opacity: 0;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: var(--color-primary);
+            /* MEJORA 4: El mensaje ahora se controla por JS */
+            opacity: 1; 
+            min-height: 1.6em; /* Mantiene el espacio */
+            text-shadow: 0 0 10px rgba(255, 143, 171, 0.5);
+        }
+
+        .hint {
+            position: fixed;
+            bottom: 30px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.3);
+            animation: pulse 2s infinite;
+        }
+
+        /* ANIMACIONES */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes cakeDrop {
+            from { transform: translateY(-200px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1); opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes smokeRise {
+            0% { opacity: 0.5; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-100px) scale(4); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .smoke.active { animation: smokeRise 2s forwards; }
+
+    </style>
+</head>
+<body onclick="wishMade()">
+
+    <audio id="bg-music" loop>
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="stars"></canvas>
+
+    <div class="content">
+        <h1 id="title">Feliz Cumpleaños especial
+            para una especial :v 😅
+        </h1>
+
+        <div class="cake">
+            <div class="candle" id="candle">
+                <div class="flame" id="flame"></div>
+                <div id="smoke" class="smoke"></div>
+            </div>
+
+            <div class="layer layer-3">
+                <div class="topping">
+                    <div class="drip-container">
+                        <div class="drip"></div>
+                        <div class="drip"></div>
+                        <div class="drip"></div>
+                        <div class="drip"></div>
+                        <div class="drip"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layer layer-2"></div>
+            <div class="layer layer-1"></div>
+        </div>
+
+        <div id="message"></div>
+    </div>
+
+    <div class="hint" id="hint">Pulsa para que dejes de ser mongola</div>
+
+    <script>
+        const canvas = document.getElementById('stars');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+        let particles = [];
+        let mouse = { x: null, y: null }; // Para rastrear el mouse
+
+        // Personalización del nombre
+        const urlParams = new URLSearchParams(window.location.search);
+        const nombre = urlParams.get('Jhenyfer') || "¡Feliz cumpleaños! 🥳✨ Un año menos de vida… pero tranquila, todavía hay para rato 😂✨ De verdad espero que hoy la pases increíble, que te llenen de sonrisas, sorpresas y momentos lindos. Gracias por ser esa persona tan especial y demasiado especial diría yo :v 😅🤪Que este nuevo año venga con muchas alegrías, sueños cumplidos y cosas bonitas para ti¡Pásalo increíble  y no estés ahí toda pepelito y sin fuerzas!😅🎂🎉";
+        const textoCompleto = ` Para - Jhenyfer mongola 🤪, ${nombre} ✨`;
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            
+            // Estrellas de fondo
+            for (let i = 0; i < 200; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 1.5,
+                    blink: Math.random() * 0.05
+                });
+            }
+        }
+
+        // Rastrear el movimiento del mouse
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+            
+            // MEJORA 2: Crear polvo estelar al mover el mouse
+            if (interacted) { // Solo después de pedir el deseo
+                for(let i=0; i<2; i++) {
+                    particles.push({
+                        x: mouse.x,
+                        y: mouse.y,
+                        size: Math.random() * 3 + 1,
+                        color: `hsl(${Date.now() % 360}, 70%, 80%)`,
+                        velocity: {
+                            x: (Math.random() - 0.5) * 2,
+                            y: (Math.random() - 0.5) * 2
+                        },
+                        gravity: 0,
+                        opacity: 1,
+                        life: 100 // Cuánto dura
+                    });
+                }
+            }
+        });
+
+        // Rastrear toque en móviles
+        window.addEventListener('touchmove', (e) => {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+            // (Mismo código de partículas si quieres añadirlo aquí)
+        });
+
+
+        function createConfetti() {
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    size: Math.random() * 8 + 4,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                    velocity: {
+                        x: (Math.random() - 0.5) * 18,
+                        y: (Math.random() - 0.5) * 18 - 5
+                    },
+                    gravity: 0.2,
+                    opacity: 1,
+                    life: 200
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar Estrellas
+            stars.forEach(s => {
+                let opacity = 0.2 + Math.abs(Math.sin(Date.now() * 0.001 + s.x));
+                ctx.globalAlpha = opacity;
+                ctx.fillStyle = "white";
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Dibujar Partículas (Confeti y Polvo Estelar)
+            particles.forEach((p, index) => {
+                p.velocity.y += p.gravity;
+                p.x += p.velocity.x;
+                p.y += p.velocity.y;
+                p.opacity -= (1 / p.life); // Se desvanecen según su vida
+
+                if (p.opacity > 0) {
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                } else {
+                    particles.splice(index, 1);
+                }
+            });
+
+            requestAnimationFrame(draw);
+        }
+
+        // MEJORA 4: Función para el efecto de escritura
+        function typeWriter(text, i, fnCallback) {
+            if (i < text.length) {
+                document.getElementById("message").innerHTML = text.substring(0, i+1) +'<span aria-hidden="true">|</span>';
+                setTimeout(function() {
+                    typeWriter(text, i + 1, fnCallback)
+                }, 100); // Velocidad de escritura
+            } else if (typeof fnCallback == 'function') {
+                setTimeout(fnCallback, 700);
+            }
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
+
+        let interacted = false;
+        function wishMade() {
+            if (interacted) return;
+            interacted = true;
+
+            // Iniciar música
+            const audio = document.getElementById('bg-music');
+            audio.play().catch(e => console.log("Audio bloqueado por el navegador"));
+
+            const flame = document.getElementById('flame');
+            const smoke = document.getElementById('smoke');
+            const hint = document.getElementById('hint');
+            const title = document.getElementById('title');
+
+            flame.style.display = 'none';
+            smoke.classList.add('active');
+            
+            createConfetti();
+
+            // MEJORA 4: Iniciar el efecto de escritura
+            typeWriter(textoCompleto, 0, function(){
+                // Opcional: Borrar el cursor "|" al terminar
+                document.getElementById("message").innerHTML = textoCompleto;
+            });
+
+            hint.style.opacity = '0';
+
+            if ("vibrate" in navigator) navigator.vibrate([100, 50, 100]);
+            title.innerText = "¡Feliz Cumpleaños Causista✨!!!";
+            // MEJORA 1: Brillo extra al título
+            title.style.textShadow = "0 0 20px #fff, 0 0 30px var(--color-primary)";
+        }
+    </script>
+</body>
+</html>
